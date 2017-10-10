@@ -1,5 +1,26 @@
 version: '2'
 services:
+
+  webapp:
+    build: ./CentOS7
+    ports:
+      - "8080:80"
+      - "10443:443"
+    volumes:
+      - ../sample/:/var/www/vhosts/localhost.localdomain.tld
+    container_name: webapp
+
+    privileged: true
+
+    tty: true
+    
+    command: /sbin/init
+# 
+#   data:
+#     image: busybox
+#     volumes:
+#       - ./misc/data:/var/lib/mysql
+# 
 #   rdb:
 #     image: mariadb:5.5
 #     environment:
@@ -9,24 +30,28 @@ services:
 #       MYSQL_PASSWORD: dev_password
 #     ports:
 #       - "13306:3306"
+#     volumes_from:
+#       - data
+#     volumes:
+#       - ./initial.sql:/docker-entrypoint-initdb.d/initial.sql
 #     container_name: rdb
-  webapp:
-    image: centos:7
-    ports:
-      - "80:80"
-      - "443:443"
+# 
+# 
+# 
+# 
+#   webapp:
+#     image: centos:7
+#     ports:
+#       - "80:80"
+#       - "443:443"
 #     volumes:
 #       - ../:/var/www/html
 #     links:
 #       - web
-    container_name: webapp
+#     container_name: webapp
+# 
 #   memcached:
 #     image: memcached:1.4
-# 
-#   data:
-#     image: busybox
-#     volumes:
-#       - ./misc/data:/var/lib/mysql
 # 
 #   mysql:
 #     image: mysql:5.7
