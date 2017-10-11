@@ -17,4 +17,3 @@ chgrp postfix /etc/sasldb2
 chown 600 /etc/sasldb2
 systemctl start saslauthd && systemctl enable saslauthd
 mkdir -p /etc/skel/Maildir/{new,cur,tmp} && chmod -R 700 /etc/skel/Maildir/
-#systemctl start postfix && systemctl enable postfix
