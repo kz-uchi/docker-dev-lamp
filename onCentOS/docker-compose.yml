@@ -1,6 +1,24 @@
 version: '2'
 services:
 
+  webapp:
+    build: ./CentOS7
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../sample/:/var/www/vhosts/localhost.localdomain.tld  # modify your working dierctory
+    privileged: true
+    command: /sbin/init
+    links:
+      - rdb
+    environment:
+      DATABASE_HOST: 'rdb'
+      DATABASE_NAME: 'mydb'
+      DATABASE_USER: 'dev'
+      DATABASE_PASSWORD: 'dev_password'
+    container_name: webapp
+
   data:
     image: busybox
     volumes:
@@ -20,19 +38,3 @@ services:
     volumes:
       - ./sample/sql/initial.sql:/docker-entrypoint-initdb.d/initial.sql  # modify your application case.
     container_name: rdb
-
-	webapp:
-		build: ./php56-apache
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ../sample/:/var/www/html
-    links:
-      - rdb
-    environment:
-      DATABASE_HOST: 'rdb'
-      DATABASE_NAME: 'mydb'
-      DATABASE_USER: 'dev'
-      DATABASE_PASSWORD: 'dev_password'
-    container_name: webapp
