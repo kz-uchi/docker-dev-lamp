@@ -1,35 +1,35 @@
 version: '2'
 services:
 
-  data:
-    image: busybox
-    volumes:
-      - ./misc/data:/var/lib/mysql
+#   data:
+#     image: busybox
+#     volumes:
+#       - ./misc/data:/var/lib/mysql
+# 
+#   rdb:
+#     image: mariadb:5.5
+#     environment:
+#       MYSQL_ROOT_PASSWORD: password
+#       MYSQL_DATABASE: mydb
+#       MYSQL_USER: dev
+#       MYSQL_PASSWORD: dev_password
+#     ports:
+#       - "13306:3306"
+#     volumes_from:
+#       - data
+#     volumes:
+#       - ./sample/sql/initial.sql:/docker-entrypoint-initdb.d/initial.sql  # modify your application case.
+#     container_name: rdb
 
-  rdb:
-    image: mariadb:5.5
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: mydb
-      MYSQL_USER: dev
-      MYSQL_PASSWORD: dev_password
-    ports:
-      - "13306:3306"
-    volumes_from:
-      - data
-    volumes:
-      - ./sample/sql/initial.sql:/docker-entrypoint-initdb.d/initial.sql  # modify your application case.
-    container_name: rdb
-
-	webapp:
-		build: ./php56-apache
+  webapp:
+    build: ./php54-apache
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ../sample/:/var/www/html
-    links:
-      - rdb
+      - ../sample/htdocs:/var/www/html
+#     links:
+#       - rdb
     environment:
       DATABASE_HOST: 'rdb'
       DATABASE_NAME: 'mydb'
