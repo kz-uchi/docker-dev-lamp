@@ -1,24 +1,6 @@
 version: '2'
 services:
 
-  webapp:
-    build: ./docker-webapp
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ../public_html:/var/www/vhosts/localhost.localdomain.tld  # modify your working dierctory
-    privileged: true
-    command: /sbin/init
-    links:
-      - rdb
-    environment:
-      DATABASE_HOST: 'rdb'
-      DATABASE_NAME: 'mydb'
-      DATABASE_USER: 'dev'
-      DATABASE_PASSWORD: 'dev_password'
-    container_name: webapp
-
   data:
     image: busybox
     volumes:
@@ -26,6 +8,7 @@ services:
 
   rdb:
     image: mariadb:5.5
+    container_name: rdb
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: mydb
@@ -37,4 +20,28 @@ services:
       - data
     volumes:
       - ./application/sql/initial.sql:/docker-entrypoint-initdb.d/initial.sql  # modify your application case.
-    container_name: rdb
+
+  logs:
+    image: busybox
+    volumes:
+      - ./misc/apache2:/var/log/httpd
+
+  webapp:
+    build: ./docker-webapp
+    container_name: webapp
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes_from:
+      - logs
+    volumes:
+      - ./public_html:/var/www/vhosts/localhost.localdomain.tld/htdocs  # modify your working dierctory
+    links:
+      - rdb
+    environment:
+      DATABASE_HOST: 'rdb'
+      DATABASE_NAME: 'mydb'
+      DATABASE_USER: 'dev'
+      DATABASE_PASSWORD: 'dev_password'
+    privileged: true
+    command: /sbin/init
