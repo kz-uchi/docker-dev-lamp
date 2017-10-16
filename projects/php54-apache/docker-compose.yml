@@ -1,0 +1,47 @@
+version: '2'
+services:
+
+  data:
+    image: busybox
+    volumes:
+      - ./misc/data:/var/lib/mysql
+
+  rdb:
+    image: mariadb:5.5
+    container_name: rdb
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: dev
+      MYSQL_PASSWORD: dev_password
+    ports:
+      - "13306:3306"
+    volumes_from:
+      - data
+    volumes:
+      - ./application/sql/initial.sql:/docker-entrypoint-initdb.d/initial.sql
+
+  logs:
+    image: busybox
+    volumes:
+      - ./misc/apache2:/var/log/apache2
+
+  webapp:
+    build: ./docker-webapp
+    container_name: webapp
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes_from:
+      - logs
+    volumes:
+      - ./public_html:/var/www/html
+    links:
+      - rdb
+    environment:
+      DATABASE_HOST: 'rdb'
+      DATABASE_NAME: 'mydb'
+      DATABASE_USER: 'dev'
+      DATABASE_PASSWORD: 'dev_password'
+      APACHE_LOG_DIR: '/var/log/apache2'
+    tty: true
