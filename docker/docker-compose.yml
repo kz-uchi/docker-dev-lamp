@@ -1,0 +1,40 @@
+version: '2'
+services:
+
+  webapp:
+    build: ./CentOS7
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../sample/:/var/www/vhosts/localhost.localdomain.tld  # modify your working dierctory
+    privileged: true
+    command: /sbin/init
+    links:
+      - rdb
+    environment:
+      DATABASE_HOST: 'rdb'
+      DATABASE_NAME: 'mydb'
+      DATABASE_USER: 'dev'
+      DATABASE_PASSWORD: 'dev_password'
+    container_name: webapp
+
+  data:
+    image: busybox
+    volumes:
+      - ./misc/data:/var/lib/mysql
+
+  rdb:
+    image: mariadb:5.5
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: dev
+      MYSQL_PASSWORD: dev_password
+    ports:
+      - "13306:3306"
+    volumes_from:
+      - data
+    volumes:
+      - ./sample/sql/initial.sql:/docker-entrypoint-initdb.d/initial.sql  # modify your application case.
+    container_name: rdb
