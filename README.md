@@ -1,7 +1,8 @@
-# docker-dev-lamp-centos7
+# docker-dev-lamp
 
 ## Description
-Docker compose for php on CentOS7
+Development Enviroment.
+assumeing CentOS7.
 <!--
 ***DEMO:***
 ![Demo](https://image-url.gif)
@@ -29,8 +30,10 @@ $ docker-compose stop
 1. Install Docker for Mac.
 2. git clone this project.
 ```bash
-$ git clone git@github.com:kz-uchi/docker-dev-lamp-centos7.git
+$ git clone git@github.com:kz-uchi/docker-dev-lamp.git
 ```
+3. directory "application"
+4. directory "public_html"
 
 <!--
 ## Anything Else
